@@ -1,0 +1,10 @@
+.DS_Store
+*.pem
+*.p12
+*.key
+*.cer
+build/
+DerivedData/
+*.xcuserdatastate
+xcuserdata/
+*.xcworkspace/xcuserdata/

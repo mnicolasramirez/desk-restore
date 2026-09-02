@@ -1,0 +1,310 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7BD81642DEE6772437E1A746 /* AXWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73EAD459D2989B2F40691741 /* AXWindow.swift */; };
+		3FCFEC565FACD1E77EB9C47D /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC005DBF87462C7B27C404BC /* AppModel.swift */; };
+		CFD52F62EF56B530E01B7743 /* DebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DB718C9AF92CCE84243CE9 /* DebugLog.swift */; };
+		C052801EE2529E2F8F4D2FB3 /* DeskRestoreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71735E61F741CCD2900CA7D /* DeskRestoreApp.swift */; };
+		266BC62E42321709DB2CBDA1 /* DisplayInventory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974D65B4F4C06239DD4E76F1 /* DisplayInventory.swift */; };
+		3901EDF958E1DD68F4A120BC /* DisplayWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197870786D11E97945530D3B /* DisplayWatcher.swift */; };
+		4EE5F1E99F72E5EC945AE53B /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF481061B1E8C7D6595BEDE /* Geometry.swift */; };
+		7F69355803C0C9953B4ED9F0 /* HotKeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EEC61B83ACC82C8435E125A /* HotKeyCenter.swift */; };
+		0070F76B7CAF68274C46E1E5 /* LayoutCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EA12085ACC4953F4709E33F /* LayoutCoordinator.swift */; };
+		EF2C51DFBE737B6565D3DC74 /* LayoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84114A3B01BF6DDBBD8169D /* LayoutStore.swift */; };
+		C6056656E8BAE483FE4995A3 /* LoginItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6BADB6FF937BF5AB4804ABC /* LoginItem.swift */; };
+		87BE53E6D4FDA49B4D7D17B7 /* MenuBarUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC73BD7BE633CC695AD94A9 /* MenuBarUI.swift */; };
+		466C12454A469615383EED99 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A59E08698707FC33906B5E /* Permissions.swift */; };
+		F3798D69758CA35C807F3FFF /* SelfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D70F42AF00C52750CB418D /* SelfTest.swift */; };
+		765311FE79AC9B274F4C3370 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A006D397CDD11BEC5618B47C /* Settings.swift */; };
+		4F82712B23F9500B74769638 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3415FB00BBEA9F234F9EB26D /* SettingsView.swift */; };
+		29DA45EF1459B881025D2F7A /* WindowMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 642CDEE89D974915FE9621A3 /* WindowMatcher.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		38A007151ABE87CC01A5B6E9 /* Desk Restore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Desk Restore.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4E6D7EFB44C842A7A9609C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		73EAD459D2989B2F40691741 /* AXWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXWindow.swift; sourceTree = "<group>"; };
+		DC005DBF87462C7B27C404BC /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		C9DB718C9AF92CCE84243CE9 /* DebugLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLog.swift; sourceTree = "<group>"; };
+		D71735E61F741CCD2900CA7D /* DeskRestoreApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeskRestoreApp.swift; sourceTree = "<group>"; };
+		974D65B4F4C06239DD4E76F1 /* DisplayInventory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayInventory.swift; sourceTree = "<group>"; };
+		197870786D11E97945530D3B /* DisplayWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayWatcher.swift; sourceTree = "<group>"; };
+		CBF481061B1E8C7D6595BEDE /* Geometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
+		9EEC61B83ACC82C8435E125A /* HotKeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyCenter.swift; sourceTree = "<group>"; };
+		0EA12085ACC4953F4709E33F /* LayoutCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutCoordinator.swift; sourceTree = "<group>"; };
+		B84114A3B01BF6DDBBD8169D /* LayoutStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutStore.swift; sourceTree = "<group>"; };
+		F6BADB6FF937BF5AB4804ABC /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
+		FEC73BD7BE633CC695AD94A9 /* MenuBarUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarUI.swift; sourceTree = "<group>"; };
+		A8A59E08698707FC33906B5E /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
+		F3D70F42AF00C52750CB418D /* SelfTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfTest.swift; sourceTree = "<group>"; };
+		A006D397CDD11BEC5618B47C /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		3415FB00BBEA9F234F9EB26D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		642CDEE89D974915FE9621A3 /* WindowMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowMatcher.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		69BE8A4D8E4D9DA4E7DB3928 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E50290A24C49A459B43487C5 = {
+			isa = PBXGroup;
+			children = (
+				958B6263A0B70C847CDA462B /* Sources */,
+				E4E6D7EFB44C842A7A9609C6 /* Info.plist */,
+				328EC33DF3954DC9B83FA285 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		958B6263A0B70C847CDA462B /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				73EAD459D2989B2F40691741 /* AXWindow.swift */,
+				DC005DBF87462C7B27C404BC /* AppModel.swift */,
+				C9DB718C9AF92CCE84243CE9 /* DebugLog.swift */,
+				D71735E61F741CCD2900CA7D /* DeskRestoreApp.swift */,
+				974D65B4F4C06239DD4E76F1 /* DisplayInventory.swift */,
+				197870786D11E97945530D3B /* DisplayWatcher.swift */,
+				CBF481061B1E8C7D6595BEDE /* Geometry.swift */,
+				9EEC61B83ACC82C8435E125A /* HotKeyCenter.swift */,
+				0EA12085ACC4953F4709E33F /* LayoutCoordinator.swift */,
+				B84114A3B01BF6DDBBD8169D /* LayoutStore.swift */,
+				F6BADB6FF937BF5AB4804ABC /* LoginItem.swift */,
+				FEC73BD7BE633CC695AD94A9 /* MenuBarUI.swift */,
+				A8A59E08698707FC33906B5E /* Permissions.swift */,
+				F3D70F42AF00C52750CB418D /* SelfTest.swift */,
+				A006D397CDD11BEC5618B47C /* Settings.swift */,
+				3415FB00BBEA9F234F9EB26D /* SettingsView.swift */,
+				642CDEE89D974915FE9621A3 /* WindowMatcher.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		328EC33DF3954DC9B83FA285 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				38A007151ABE87CC01A5B6E9 /* Desk Restore.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0E8A3AD980EC179856012B7E /* Desk Restore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B483F6EB73610DE752E457A0 /* Build configuration list for PBXNativeTarget "Desk Restore" */;
+			buildPhases = (
+				4E57AE888889001C06A4F7E8 /* Sources */,
+				69BE8A4D8E4D9DA4E7DB3928 /* Frameworks */,
+				D6C9E8A172005E68A1DD674F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Desk Restore";
+			productName = "Desk Restore";
+			productReference = 38A007151ABE87CC01A5B6E9 /* Desk Restore.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		98F54143AB4E86B28C3AFEE0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					0E8A3AD980EC179856012B7E = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = 41A2CC2D5321B7BB2E956CA5 /* Build configuration list for PBXProject "DeskRestore" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E50290A24C49A459B43487C5;
+			productRefGroup = 328EC33DF3954DC9B83FA285 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0E8A3AD980EC179856012B7E /* Desk Restore */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D6C9E8A172005E68A1DD674F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4E57AE888889001C06A4F7E8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BD81642DEE6772437E1A746 /* AXWindow.swift in Sources */,
+				3FCFEC565FACD1E77EB9C47D /* AppModel.swift in Sources */,
+				CFD52F62EF56B530E01B7743 /* DebugLog.swift in Sources */,
+				C052801EE2529E2F8F4D2FB3 /* DeskRestoreApp.swift in Sources */,
+				266BC62E42321709DB2CBDA1 /* DisplayInventory.swift in Sources */,
+				3901EDF958E1DD68F4A120BC /* DisplayWatcher.swift in Sources */,
+				4EE5F1E99F72E5EC945AE53B /* Geometry.swift in Sources */,
+				7F69355803C0C9953B4ED9F0 /* HotKeyCenter.swift in Sources */,
+				0070F76B7CAF68274C46E1E5 /* LayoutCoordinator.swift in Sources */,
+				EF2C51DFBE737B6565D3DC74 /* LayoutStore.swift in Sources */,
+				C6056656E8BAE483FE4995A3 /* LoginItem.swift in Sources */,
+				87BE53E6D4FDA49B4D7D17B7 /* MenuBarUI.swift in Sources */,
+				466C12454A469615383EED99 /* Permissions.swift in Sources */,
+				F3798D69758CA35C807F3FFF /* SelfTest.swift in Sources */,
+				765311FE79AC9B274F4C3370 /* Settings.swift in Sources */,
+				4F82712B23F9500B74769638 /* SettingsView.swift in Sources */,
+				29DA45EF1459B881025D2F7A /* WindowMatcher.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D08DD63EED508AD30D0CB0B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		811CB99F7A296F7846C18A7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		FDA287C7C64DC2E983A802E8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Desk Restore Dev";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.nico.desk-restore";
+				PRODUCT_NAME = "Desk Restore";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		88E6700796B683108D5F4889 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Desk Restore Dev";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.nico.desk-restore";
+				PRODUCT_NAME = "Desk Restore";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		41A2CC2D5321B7BB2E956CA5 /* Build configuration list for PBXProject "DeskRestore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D08DD63EED508AD30D0CB0B4 /* Debug */,
+				811CB99F7A296F7846C18A7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B483F6EB73610DE752E457A0 /* Build configuration list for PBXNativeTarget "Desk Restore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FDA287C7C64DC2E983A802E8 /* Debug */,
+				88E6700796B683108D5F4889 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+}
