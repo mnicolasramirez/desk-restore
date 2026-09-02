@@ -68,6 +68,37 @@ open "deskrestore://restore"
 | `deskrestore://selftest?cycles=10` | drift test; scatters your windows |
 | `deskrestore://quit` | quit the agent |
 
+## On-demand mode (no resident agent)
+
+If you dock every few weeks rather than every day, keeping the agent resident to
+catch two events a month is a poor trade. There is a one-shot mode for that.
+
+**Restore Desk Layout.app** is installed alongside the main app by `build.sh`.
+Hit Command-Space, type `restore desk`, press Return. It restores your windows and
+exits. No menu bar item appears and nothing stays running.
+
+It works either way round: if the agent happens to be resident it asks it over the
+URL scheme, and if not it launches the app in one-shot mode. The launcher itself
+needs no permissions — the work happens inside Desk Restore, which already holds
+the Accessibility grant.
+
+From the command line the same modes are:
+
+```bash
+open -a "Desk Restore" --args --restore-and-quit
+```
+
+```bash
+open -a "Desk Restore" --args --save-and-quit
+```
+
+There is deliberately no Spotlight launcher for *save* — an accidental hit on it
+would overwrite a good layout. To re-save, launch Desk Restore normally and use the
+menu.
+
+Automatic restore stays available and on by default, since docking daily is the more
+common pattern. Turn it off in Settings if you would rather drive it yourself.
+
 ## Privacy
 
 **Accessibility is the only permission requested.** It is what allows one app to

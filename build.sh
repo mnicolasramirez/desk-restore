@@ -85,4 +85,73 @@ else
   echo "==> Not installing (--no-install). Built at: $APP"
 fi
 
+# ---------------------------------------------------------------------------
+# Companion launcher: "Restore Desk Layout.app"
+#
+# For a docking cadence measured in weeks, keeping the agent resident to catch
+# two events a month is a poor trade. This is a Spotlight-searchable one-shot:
+# type its name, press Return, windows are restored, nothing stays running.
+#
+# It needs no permissions of its own. The work happens inside Desk Restore,
+# which already holds the Accessibility grant.
+# ---------------------------------------------------------------------------
+build_launcher() {
+  local NAME="Restore Desk Layout"
+  local L="$STAGE/$NAME.app"
+  rm -rf "$L"
+  mkdir -p "$L/Contents/MacOS"
+
+  cat > "$L/Contents/Info.plist" <<LPLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>              <string>$NAME</string>
+	<key>CFBundleDisplayName</key>       <string>$NAME</string>
+	<key>CFBundleIdentifier</key>        <string>com.nico.desk-restore.launcher</string>
+	<key>CFBundleExecutable</key>        <string>launcher</string>
+	<key>CFBundlePackageType</key>       <string>APPL</string>
+	<key>CFBundleShortVersionString</key><string>1.0.0</string>
+	<key>CFBundleVersion</key>           <string>1.0.0</string>
+	<key>LSMinimumSystemVersion</key>    <string>$DEPLOYMENT_TARGET</string>
+	<key>LSUIElement</key>               <true/>
+	<key>LSBackgroundOnly</key>          <false/>
+</dict>
+</plist>
+LPLIST
+
+  cat > "$L/Contents/MacOS/launcher" <<'LSCRIPT'
+#!/bin/zsh
+# If the agent is already resident, ask it over its URL scheme. If it is not,
+# launch it in one-shot mode so it restores and exits without going resident.
+if pgrep -x "Desk Restore" >/dev/null 2>&1; then
+  open "deskrestore://restore"
+else
+  open -a "Desk Restore" --args --restore-and-quit
+fi
+LSCRIPT
+  chmod +x "$L/Contents/MacOS/launcher"
+  plutil -lint "$L/Contents/Info.plist" >/dev/null
+
+  if security find-certificate -c "$SIGN_IDENTITY" >/dev/null 2>&1; then
+    codesign --force --sign "$SIGN_IDENTITY" \
+      --identifier "com.nico.desk-restore.launcher" --timestamp=none "$L" 2>/dev/null
+  else
+    codesign --force --sign - --identifier "com.nico.desk-restore.launcher" "$L" 2>/dev/null
+  fi
+  print -r -- "$L"
+}
+
+echo "==> Building the one-shot launcher"
+LAUNCHER="$(build_launcher)"
+echo "    built: ${LAUNCHER:t}"
+
+if [[ $INSTALL -eq 1 ]]; then
+  LDEST="$INSTALL_DIR/${LAUNCHER:t}"
+  osascript -e "tell application \"Restore Desk Layout\" to quit" >/dev/null 2>&1 || true
+  rm -rf "$LDEST"
+  cp -R "$LAUNCHER" "$LDEST"
+  echo "    installed: $LDEST"
+fi
+
 echo "==> Done."

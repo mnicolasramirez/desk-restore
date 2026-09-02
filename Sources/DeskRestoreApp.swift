@@ -9,8 +9,11 @@ struct DeskRestoreApp: App {
     @Environment(\.openWindow) private var openWindow
     @StateObject private var model = AppModel.shared
 
+    /// A one-shot launch must not flash a menu bar icon on its way past.
+    @State private var showsMenuBarItem = !LaunchMode.current.isOneShot
+
     var body: some Scene {
-        MenuBarExtra {
+        MenuBarExtra(isInserted: $showsMenuBarItem) {
             MenuBarUI(model: model) { openSettingsWindow() }
         } label: {
             Image(systemName: "macwindow.on.rectangle")
@@ -54,6 +57,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     func applicationDidFinishLaunching(_ notification: Notification) {
         log.isEnabled = settings.debugLogging
         log.rotateIfNeeded()
+        // A one-shot launch does its one job and leaves. No menu bar, no
+        // hotkey, no watcher, nothing resident.
+        if LaunchMode.current.isOneShot, Permissions.isTrusted {
+            runOneShotThenQuit(LaunchMode.current)
+            return
+        }
+        if LaunchMode.current.isOneShot {
+            // Asked to do a job it has no permission for. Falling through to
+            // agent mode surfaces the permission window rather than exiting
+            // silently, which would look like the app simply did not work.
+            log.note("one-shot \(LaunchMode.current.rawValue) requested without "
+                   + "Accessibility permission — starting normally to ask for it")
+        }
+
         log.heading("agent launched — pid \(ProcessInfo.processInfo.processIdentifier)")
 
         model.startRefreshing()
@@ -85,6 +102,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         HotKeyCenter.shared.unregister()
         watcher.stop()
         log.note("agent terminating")
+    }
+
+    // MARK: - One-shot
+
+    /// Runs off the main thread — a restore pass blocks on retries and settling
+    /// delays — then terminates. The extra verification pass mirrors the
+    /// automatic path, since a window that lands late would otherwise be missed
+    /// with no menu left to notice it from.
+    private func runOneShotThenQuit(_ mode: LaunchMode) {
+        log.heading("one-shot \(mode.rawValue) — pid \(ProcessInfo.processInfo.processIdentifier)")
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            switch mode {
+            case .restoreAndQuit:
+                let report = LayoutCoordinator.shared.restore()
+                Thread.sleep(forTimeInterval: 1.0)
+                let repaired = LayoutCoordinator.shared.verifyAndRepair()
+                self?.log.note("one-shot restore: \(report.summary)"
+                             + (repaired > 0 ? ", \(repaired) repaired" : ""))
+            case .saveAndQuit:
+                let ok = LayoutCoordinator.shared.save()
+                self?.log.note("one-shot save: \(ok ? "ok" : "failed")")
+            case .agent:
+                break
+            }
+            DispatchQueue.main.async { NSApplication.shared.terminate(nil) }
+        }
     }
 
     // MARK: - Permission
