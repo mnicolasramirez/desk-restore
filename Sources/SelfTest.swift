@@ -254,3 +254,181 @@ extension SelfTest {
         }
     }
 }
+
+// MARK: - Display tests
+
+extension SelfTest {
+
+    /// Everything here is synthetic, which is the point: it exercises display
+    /// arrangements and monitor identities this machine does not have. Only one
+    /// configuration was ever available to test against for real — a single
+    /// external 4K at 2.0 scale reporting a non-zero serial — so the awkward
+    /// cases other people will hit are covered here or not at all.
+    static func runDisplayTests() {
+        let log = DebugLog.shared
+        log.heading("SELFTEST displays")
+
+        var failures: [String] = []
+        func check(_ name: String, _ condition: Bool, _ detail: String = "") {
+            if condition { log.note("  PASS  \(name)") }
+            else {
+                failures.append(name)
+                log.note("  FAIL  \(name)\(detail.isEmpty ? "" : " — " + detail)")
+            }
+        }
+
+        // ---- Coordinate transform across display arrangements ----
+        //
+        // AppKit origin is the bottom-left of the display at (0, 0); CG origin
+        // is its top-left. A display above the primary therefore has NEGATIVE
+        // y in CG, and one below has y greater than the primary's height.
+        // Getting these signs wrong is how a window lands off-screen.
+        let H = 1080.0   // a 1920x1080 primary
+
+        check("primary maps to CG origin",
+              Coordinates.toCG(CGRect(x: 0, y: 0, width: 1920, height: 1080), flipHeight: H)
+                == Rect(x: 0, y: 0, width: 1920, height: 1080))
+
+        check("display above primary gets negative CG y",
+              Coordinates.toCG(CGRect(x: 0, y: 1080, width: 1920, height: 1080), flipHeight: H)
+                == Rect(x: 0, y: -1080, width: 1920, height: 1080))
+
+        check("display below primary gets CG y past the primary",
+              Coordinates.toCG(CGRect(x: 0, y: -1080, width: 1920, height: 1080), flipHeight: H)
+                == Rect(x: 0, y: 1080, width: 1920, height: 1080))
+
+        check("display left of primary keeps negative x",
+              Coordinates.toCG(CGRect(x: -2560, y: 0, width: 2560, height: 1440), flipHeight: H)
+                == Rect(x: -2560, y: -360, width: 2560, height: 1440))
+
+        check("a window inside the primary flips correctly",
+              Coordinates.toCG(CGRect(x: 100, y: 100, width: 800, height: 600), flipHeight: H)
+                == Rect(x: 100, y: 380, width: 800, height: 600))
+
+        // The transform must be its own inverse, on every arrangement.
+        let arrangements = [
+            CGRect(x: 0, y: 0, width: 1920, height: 1080),
+            CGRect(x: 0, y: 1080, width: 1920, height: 1080),
+            CGRect(x: -2560, y: -300, width: 2560, height: 1440),
+            CGRect(x: 340, y: -1234, width: 1512, height: 982),
+        ]
+        check("toAppKit(toCG(r)) == r on every arrangement",
+              arrangements.allSatisfy {
+                  Coordinates.toAppKit(Coordinates.toCG($0, flipHeight: H), flipHeight: H) == $0
+              })
+
+        // ---- Identity matching ----
+        func identity(vendor: UInt32 = 100, model: UInt32 = 200, serial: UInt32 = 300,
+                      name: String = "Acme 27", width: Double = 2560,
+                      height: Double = 1440, builtin: Bool = false) -> DisplayIdentity {
+            DisplayIdentity(vendorNumber: vendor, modelNumber: model, serialNumber: serial,
+                            localizedName: name, pointWidth: width, pointHeight: height,
+                            isBuiltin: builtin)
+        }
+
+        check("identical monitors match on vendor+model+serial",
+              DisplayInventory.match(identity(), identity()) == .vendorModelSerial)
+
+        // The important one. A great many monitors report serial 0, and if that
+        // counted as a match, every serial-0 monitor would look like every
+        // other one. Tier 1 must refuse a zero serial.
+        check("serial 0 does NOT match on the serial tier",
+              DisplayInventory.match(identity(serial: 0), identity(serial: 0)) == .vendorModelName,
+              "\(DisplayInventory.match(identity(serial: 0), identity(serial: 0)).label)")
+
+        check("two different serial-0 models do not match at all",
+              DisplayInventory.match(identity(model: 200, serial: 0, name: "Acme 27", width: 2560),
+                                     identity(model: 999, serial: 0, name: "Other 24", width: 1920))
+                == .none)
+
+        check("same monitor, renamed by macOS, still matches on serial",
+              DisplayInventory.match(identity(name: "Acme 27"), identity(name: "Acme 27 (2)"))
+                == .vendorModelSerial)
+
+        check("a resolution change does not break serial matching",
+              DisplayInventory.match(identity(width: 1920, height: 1080), identity())
+                == .vendorModelSerial)
+
+        check("unknown vendor falls back to name + size",
+              DisplayInventory.match(identity(vendor: 0, model: 0, serial: 0),
+                                     identity(vendor: 0, model: 0, serial: 0))
+                == .nameAndSize)
+
+        check("size-only match is reported as weak",
+              DisplayInventory.match(identity(vendor: 0, model: 0, serial: 0, name: "A"),
+                                     identity(vendor: 0, model: 0, serial: 0, name: "B")).isWeak)
+
+        // ---- Snapshot behaviour that restore depends on ----
+        func display(_ id: DisplayIdentity, visible: Rect, scale: Double) -> DisplaySnapshot {
+            DisplaySnapshot(identity: id,
+                            frame: Rect(x: visible.x, y: 0, width: visible.width,
+                                        height: visible.height + 30),
+                            visibleFrame: visible, backingScale: scale,
+                            pixelWidth: Int(visible.width * scale),
+                            pixelHeight: Int(visible.height * scale))
+        }
+        let hidpi = display(identity(), visible: Rect(x: 0, y: 30, width: 2560, height: 1410), scale: 2)
+        let lodpi = display(identity(), visible: Rect(x: 0, y: 30, width: 2560, height: 1410), scale: 1)
+
+        check("same size but different backing scale is NOT pixel-exact replayable",
+              !hidpi.isGeometricallyIdentical(to: lodpi))
+        check("same size and scale is pixel-exact replayable",
+              hidpi.isGeometricallyIdentical(to: hidpi))
+
+        // ---- Mode detection ----
+        let builtin = display(identity(name: "Built-in", width: 1512, height: 982, builtin: true),
+                              visible: Rect(x: 0, y: 30, width: 1512, height: 952), scale: 2)
+        let external = hidpi
+
+        check("laptop only, no layout saved -> laptop",
+              DisplayInventory.mode(for: [builtin], savedTargets: []) == .laptop)
+        check("external present, no layout saved -> desktop",
+              DisplayInventory.mode(for: [external], savedTargets: []) == .desktop)
+        check("the saved monitor is attached -> desktop",
+              DisplayInventory.mode(for: [external], savedTargets: [external.identity]) == .desktop)
+        check("a DIFFERENT external monitor is attached -> laptop, not desktop",
+              DisplayInventory.mode(for: [display(identity(vendor: 7, model: 7, serial: 7, name: "Hotel TV",
+                                                           width: 1920, height: 1080),
+                                                  visible: Rect(x: 0, y: 30, width: 1920, height: 1050), scale: 1)],
+                                    savedTargets: [external.identity]) == .laptop)
+
+        // The travel case that motivated the rule above: a projector or hotel
+        // screen at a resolution the desk monitor also uses must not be taken
+        // for the desk monitor.
+        check("an unidentifiable screen of the SAME size is not the desk monitor",
+              DisplayInventory.mode(for: [display(identity(vendor: 0, model: 0, serial: 0,
+                                                           name: "Conference Room", width: 2560, height: 1440),
+                                                  visible: Rect(x: 0, y: 30, width: 2560, height: 1410), scale: 2)],
+                                    savedTargets: [external.identity]) == .laptop)
+        check("lid open, saved monitor also attached -> desktop",
+              DisplayInventory.mode(for: [builtin, external],
+                                    savedTargets: [external.identity]) == .desktop)
+
+        // ---- Assigning a window to a display, multi-display ----
+        let left = display(identity(name: "Left"), visible: Rect(x: 0, y: 30, width: 2560, height: 1410), scale: 2)
+        let right = display(identity(name: "Right"), visible: Rect(x: 2560, y: 30, width: 1920, height: 1050), scale: 1)
+
+        check("a window is assigned to the display containing its centre",
+              DisplayInventory.display(for: Rect(x: 2700, y: 100, width: 600, height: 400),
+                                       among: [left, right])?.identity.localizedName == "Right")
+        check("a window straddling two displays goes to the larger overlap",
+              DisplayInventory.display(for: Rect(x: 2400, y: 100, width: 900, height: 400),
+                                       among: [left, right])?.identity.localizedName == "Right")
+
+        // ---- Clamping onto a smaller display ----
+        // The travel case: a layout saved on a big monitor, replayed on a
+        // small one. Nothing may end up off-screen.
+        let small = Rect(x: 0, y: 30, width: 1440, height: 870)
+        let oversized = Rect(x: 200, y: 100, width: 3000, height: 1600)
+        let fitted = oversized.clampedAndRounded(into: small)
+        check("an oversized window is clamped inside the smaller display",
+              fitted.minX >= small.minX && fitted.minY >= small.minY
+                && fitted.maxX <= small.maxX && fitted.maxY <= small.maxY,
+              fitted.shortDescription)
+        check("clamping produces whole points",
+              fitted == fitted.rounded, fitted.shortDescription)
+
+        if failures.isEmpty { log.note("SELFTEST DISPLAYS PASS") }
+        else { log.note("SELFTEST DISPLAYS FAIL — \(failures.count) case(s)") }
+    }
+}

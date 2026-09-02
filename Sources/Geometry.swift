@@ -96,11 +96,18 @@ struct NormalizedFrame: Codable, Equatable {
 enum Coordinates {
 
     /// Height of the AppKit global coordinate space: the max-y of the display
-    /// carrying the menu bar, which is `NSScreen.screens[0]` and has AppKit
-    /// origin (0, 0).
+    /// that defines the origin.
+    ///
+    /// `NSScreen.screens[0]` is documented as the display carrying the menu
+    /// bar, and therefore the one at AppKit origin (0, 0). Rather than trust
+    /// that, this looks for the screen actually at the origin and falls back to
+    /// index 0. The two agree on every normal setup; if they ever diverge, the
+    /// derived value is the correct one, and `verifyCoordinateConversion()`
+    /// would catch it either way.
     static var flipHeight: Double {
-        guard let primary = NSScreen.screens.first else { return 0 }
-        return Double(primary.frame.maxY)
+        let screens = NSScreen.screens
+        let origin = screens.first { $0.frame.origin == .zero } ?? screens.first
+        return Double(origin?.frame.maxY ?? 0)
     }
 
     static func toCG(_ r: CGRect, flipHeight H: Double) -> Rect {

@@ -167,6 +167,21 @@ Titles dominate because they are the most stable identifier across a dock cycle.
 Geometry is weighted lowest because it is precisely the thing that has just been
 disturbed.
 
+## Travelling with it
+
+Displays are identified by vendor, model and serial number rather than by
+`CGDirectDisplayID`, which is a runtime handle that changes across reconnects.
+
+A hotel TV or conference-room projector at a resolution your desk monitor also uses
+will **not** be mistaken for your desk monitor: matching on size alone is treated as
+too weak to trigger an automatic restore, so plugging into a meeting-room screen
+leaves your windows alone. Restore is still available manually if you want it, and
+the layout is clamped to fit whatever display you are actually on, so nothing lands
+off-screen.
+
+There is no per-display setup step. Save captures whatever your monitor reports, and
+that becomes the layout's target. Save again on a different setup to retarget it.
+
 ## Which windows are managed
 
 A window is moved only if its application is a regular, visible app, and the window
@@ -238,9 +253,16 @@ Installing Xcode and signing with a free Apple ID team achieves the same thing.
   as `constrained`.
 - **Moving the app** invalidates the Accessibility grant, which is tied to the path as
   well as the signature. Install once, then leave it.
-- **Multi-monitor is unexercised.** The data model supports several displays per
-  layout and the code paths exist, but this has only ever been run against a single
-  external display.
+- **Multi-monitor is untested on real hardware.** The data model supports several
+  displays per layout, and the identity matching, coordinate transforms, display
+  assignment and mode detection are covered by 25 synthetic tests including
+  above/below/left arrangements, mixed backing scales, and built-in plus external
+  together. But it has only ever *run* against one external display. If you have a
+  multi-monitor setup, `./verify.sh` and `deskrestore://probe` will tell you what it
+  sees.
+- **Two identical monitors cannot be told apart.** Displays are identified by
+  vendor, model and serial. Two of the same model that both report serial 0 are
+  genuinely indistinguishable, and a layout saved on one may replay on the other.
 - **The Xcode project is unverified.** `DeskRestore.xcodeproj` is hand-written and its
   structure validates, but it has never been opened in Xcode. `build.sh` is the
   tested path.

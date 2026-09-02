@@ -93,6 +93,16 @@ else
   grep "FAIL " "$LOG" | sed 's/^.*FAIL/        FAIL/'
 fi
 
+# 6b. Display identity, coordinate transforms and mode detection, against
+#     synthetic multi-monitor configurations. Pure, moves nothing.
+: > "$LOG"
+open "deskrestore://selftest-displays"; sleep 4
+if grep -q "SELFTEST DISPLAYS PASS" "$LOG"; then pass "display self-tests (25 cases)"
+else
+  fail "display self-tests"
+  grep "FAIL " "$LOG" | sed 's/^.*FAIL/        FAIL/'
+fi
+
 # 7. Saved layout still readable under the current schema.
 if [[ -f "$SUPPORT/layouts.json" ]]; then
   V="$(python3 -c "import json;d=json.load(open('$SUPPORT/layouts.json'));print(d['version'],len(d['layouts'][0]['windows']))" 2>/dev/null)"

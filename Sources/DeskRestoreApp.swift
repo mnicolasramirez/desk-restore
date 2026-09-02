@@ -196,6 +196,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             watcher.runSelfTest(cycles: cycles)
         case "selftest-matcher":
             DispatchQueue.global().async { SelfTest.runMatcherTests() }
+        case "selftest-displays":
+            DispatchQueue.global().async { SelfTest.runDisplayTests() }
         case "simulate-dock":
             watcher.simulateDockTransition()
         case "open-permission", "open-settings":

@@ -136,8 +136,12 @@ enum DisplayInventory {
            saved.serialNumber != 0 {
             return .vendorModelSerial
         }
+        // Requires a real vendor and model: with both zero this tier collapses
+        // into a bare name comparison, and calling that "vendor + model + name"
+        // would overstate the evidence and stop it being logged as weak.
         if live.vendorNumber == saved.vendorNumber,
            live.modelNumber == saved.modelNumber,
+           saved.vendorNumber != 0, saved.modelNumber != 0,
            live.localizedName == saved.localizedName {
             return .vendorModelName
         }
@@ -185,13 +189,23 @@ enum DisplayInventory {
     /// layout exists, its identity matches that layout's target display.
     /// Before any layout is saved, any external display counts, so the menu
     /// shows the right thing on first run.
+    /// A size-only match is deliberately NOT enough to call a display "the desk
+    /// monitor". Hotel, conference and meeting-room screens share the common
+    /// resolutions, so treating a bare size match as identity would fire an
+    /// automatic restore of the desk layout onto a projector. Weak matches are
+    /// still honoured for a restore the user explicitly asks for — they are just
+    /// not allowed to trigger one.
+    static let minimumMatchForDesktopMode: DisplayMatch = .nameAndSize
+
     static func mode(for displays: [DisplaySnapshot],
                      savedTargets: [DisplayIdentity]) -> ScreenMode {
         let externals = displays.filter { !$0.identity.isBuiltin }
         guard !externals.isEmpty else { return .laptop }
         guard !savedTargets.isEmpty else { return .desktop }
         for saved in savedTargets where saved.isBuiltin == false {
-            if externals.contains(where: { match($0.identity, saved) != .none }) {
+            if externals.contains(where: {
+                match($0.identity, saved) >= minimumMatchForDesktopMode
+            }) {
                 return .desktop
             }
         }
