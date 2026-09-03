@@ -90,6 +90,11 @@ final class LayoutCoordinator {
         do {
             var file = (try? LayoutStore.load()) ?? .empty
             file.version = LayoutFile.currentVersion
+            // Set the outgoing layout aside before overwriting it.
+            if var displaced = file.layout(id: layoutID) {
+                displaced.id = LayoutStore.previousLayoutID
+                file.upsert(displaced)
+            }
             file.upsert(layout)
             try LayoutStore.save(file)
         } catch {
@@ -103,6 +108,51 @@ final class LayoutCoordinator {
             log.debug("  skipped \(skip.application) — \(skip.reason)")
         }
         return true
+    }
+
+    // MARK: - Undo
+
+    /// Swaps the active layout with the one the last Save displaced, and
+    /// returns the timestamp now active.
+    ///
+    /// A swap rather than a one-way revert, so undoing an undo is possible and
+    /// there is no state you can get stuck in. It changes only what is stored —
+    /// windows are not moved. Restore is one item away in the menu if you want
+    /// that too, and conflating the two would make an undo do something the
+    /// user did not ask for.
+    @discardableResult
+    func undoSave(layoutID: String = LayoutStore.defaultLayoutID) -> Date? {
+        log.heading("UNDO SAVE")
+
+        guard var file = try? LayoutStore.load(),
+              var previous = file.layout(id: LayoutStore.previousLayoutID)
+        else {
+            log.note("undo save: nothing to undo")
+            return nil
+        }
+
+        let becomingActive = previous.savedAt
+        if var current = file.layout(id: layoutID) {
+            current.id = LayoutStore.previousLayoutID
+            previous.id = layoutID
+            file.upsert(previous)
+            file.upsert(current)
+        } else {
+            previous.id = layoutID
+            file.upsert(previous)
+            file.layouts.removeAll { $0.id == LayoutStore.previousLayoutID }
+        }
+
+        do {
+            try LayoutStore.save(file)
+        } catch {
+            log.note("undo save FAILED writing \(LayoutStore.url.path): \(error)")
+            return nil
+        }
+
+        log.note("undo save: active layout is now the one saved \(becomingActive) "
+               + "(\(previous.windows.count) windows)")
+        return becomingActive
     }
 
     // MARK: - Restore

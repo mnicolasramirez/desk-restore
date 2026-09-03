@@ -11,6 +11,7 @@ final class AppModel: ObservableObject {
     @Published var externalDisplayName: String?
     @Published var hasSavedLayout = false
     @Published var savedAt: Date?
+    @Published var previousSavedAt: Date?
     /// Shown in the menu only when something needs attention: a failed save, or
     /// a restore that could not place every window. Success says nothing —
     /// after a save the "Saved:" line already carries the new timestamp, and
@@ -31,7 +32,7 @@ final class AppModel: ObservableObject {
     /// `layouts.json` is only decoded when its modification date changes.
     /// Everything the menu shows is otherwise derived from one display
     /// enumeration, so an idle refresh costs a stat and a screen query.
-    private var cachedLayout: Layout?
+    private var cachedFile: LayoutFile?
     private var cachedStamp: Date?
 
     init(watcher: DisplayWatcher) {
@@ -64,21 +65,45 @@ final class AppModel: ObservableObject {
         let displays = DisplayInventory.snapshot()
         externalDisplayName = displays.first { !$0.identity.isBuiltin }?.identity.localizedName
 
-        let layout = currentLayout()
+        let file = currentFile()
+        let layout = file?.layout(id: LayoutStore.defaultLayoutID)
         hasSavedLayout = layout != nil
         savedAt = layout?.savedAt
+        previousSavedAt = file?.layout(id: LayoutStore.previousLayoutID)?.savedAt
         mode = DisplayInventory.mode(for: displays,
                                      savedTargets: layout?.targetIdentities ?? [])
     }
 
     /// Decodes only when `layouts.json` has actually changed on disk.
-    private func currentLayout() -> Layout? {
+    private func currentFile() -> LayoutFile? {
         let stamp = LayoutStore.modificationDate
         if stamp != cachedStamp {
             cachedStamp = stamp
-            cachedLayout = (try? LayoutStore.load())?.layout(id: LayoutStore.defaultLayoutID)
+            cachedFile = try? LayoutStore.load()
         }
-        return cachedLayout
+        return cachedFile
+    }
+
+    var canUndoSave: Bool { previousSavedAt != nil }
+
+    /// The menu item names where it would take you, so "undo" is never a guess.
+    var undoSaveLabel: String {
+        guard let previousSavedAt else { return "Undo Save" }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return "Undo Save — back to \(formatter.string(from: previousSavedAt))"
+    }
+
+    func undoSave() {
+        isWorking = true
+        notice = nil
+        watcher.undoSaveNow { [weak self] restored in
+            guard let self else { return }
+            self.isWorking = false
+            self.refresh()
+            self.notice = restored == nil ? "Nothing to undo" : nil
+        }
     }
 
     var modeLabel: String {

@@ -53,6 +53,9 @@ Click the menu bar icon:
 - **Save Current Desktop Layout** — capture where everything is now. Below the
   status block and behind a divider, since it overwrites the saved layout and you
   only want it when you have deliberately rearranged something
+- **Undo Save** — put back the layout the last Save replaced. Greyed out until
+  there is something to undo, and it names the timestamp it would take you back
+  to, so "undo" is never a guess
 - **Automatic Restore** — restore when the desk monitor reconnects (on by default)
 
 The status block reports the current mode, the external monitor, and when the layout
@@ -71,6 +74,7 @@ open "deskrestore://restore"
 |---|---|
 | `deskrestore://save` | save the current layout |
 | `deskrestore://restore` | restore the saved layout |
+| `deskrestore://undo-save` | undo the last save |
 | `deskrestore://probe` | dump displays, windows and skips to the log |
 | `deskrestore://selftest-matcher` | matcher unit tests; moves nothing |
 | `deskrestore://selftest?cycles=10` | drift test; scatters your windows |
@@ -106,6 +110,20 @@ menu.
 
 Automatic restore stays available and on by default, since docking daily is the more
 common pattern. Turn it off in Settings if you would rather drive it yourself.
+
+## Possible future work
+
+Not planned, just noted.
+
+**Named layout slots.** One saved layout today, under a fixed id. The stored format
+is already a versioned *array* of layouts, each with its own id and name, so several
+named slots — desk, travel, presentation — would be a menu and a picker rather than
+a schema migration. The restore machinery is indifferent to how many exist.
+
+**Per-display layouts within one slot.** The data model records a display list per
+layout and assigns each window to one of them, so a two-monitor arrangement already
+round-trips in principle. It has never run on real multi-monitor hardware.
+
 
 ## Privacy
 

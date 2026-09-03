@@ -88,6 +88,12 @@ enum LayoutStore {
 
     static let defaultLayoutID = "desktop"
 
+    /// The layout displaced by the most recent Save, kept so an accidental Save
+    /// is recoverable. Persistent on purpose: the realistic way to discover the
+    /// mistake is docking days later and watching Restore put everything in the
+    /// wrong place, which no expiring undo would still cover.
+    static let previousLayoutID = "desktop-previous"
+
     static var url: URL {
         DebugLog.supportDirectory.appendingPathComponent("layouts.json")
     }

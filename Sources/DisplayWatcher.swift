@@ -133,6 +133,14 @@ final class DisplayWatcher {
         }
     }
 
+    func undoSaveNow(completion: ((Date?) -> Void)? = nil) {
+        queue.async { [weak self] in
+            guard let self else { return }
+            let restored = self.coordinator.undoSave()
+            DispatchQueue.main.async { completion?(restored) }
+        }
+    }
+
     func runSelfTest(cycles: Int) {
         queue.async { SelfTest.runDeterminism(cycles: cycles) }
     }

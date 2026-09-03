@@ -184,6 +184,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             watcher.saveNow { ok in self.log.note("save via URL: \(ok ? "ok" : "failed")") }
         case "restore":
             watcher.restoreNow { report in self.log.note("restore via URL: \(report.summary)") }
+        case "undo-save":
+            watcher.undoSaveNow { date in
+                self.log.note("undo via URL: \(date.map { "back to \($0)" } ?? "nothing to undo")")
+            }
         case "probe":
             DispatchQueue.global().async { Diagnostics.dump() }
         case "scatter":

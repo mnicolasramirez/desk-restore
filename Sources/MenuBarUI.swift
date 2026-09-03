@@ -43,6 +43,9 @@ struct MenuBarUI: View {
         Button("Save Current Desktop Layout") { model.save() }
             .disabled(!model.isTrusted || model.isWorking)
 
+        Button(model.undoSaveLabel) { model.undoSave() }
+            .disabled(!model.canUndoSave || model.isWorking)
+
         Divider()
 
         Toggle("Automatic Restore", isOn: Binding(
