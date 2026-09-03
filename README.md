@@ -48,9 +48,17 @@ Check it over any time — after a macOS update, say:
 
 Click the menu bar icon:
 
-- **Save Current Desktop Layout** — capture where everything is now
-- **Restore Desktop Layout** — put everything back
+- **Restore Desktop Layout** — put everything back. First in the menu, because it
+  is the one you actually use
+- **Save Current Desktop Layout** — capture where everything is now. Below the
+  status block and behind a divider, since it overwrites the saved layout and you
+  only want it when you have deliberately rearranged something
 - **Automatic Restore** — restore when the desk monitor reconnects (on by default)
+
+The status block reports the current mode, the external monitor, and when the layout
+was last saved. There is no "done" message after a successful save or restore: the
+timestamp updates, and the windows move. A line only appears when something needs
+attention — an application that was not open, or a window that refused to resize.
 
 Global shortcut **⌃⌥⌘R** restores. Both are also reachable over a URL scheme, so
 Shortcuts, Raycast and Keyboard Maestro can drive it:

@@ -11,7 +11,12 @@ final class AppModel: ObservableObject {
     @Published var externalDisplayName: String?
     @Published var hasSavedLayout = false
     @Published var savedAt: Date?
-    @Published var lastStatus: String = ""
+    /// Shown in the menu only when something needs attention: a failed save, or
+    /// a restore that could not place every window. Success says nothing —
+    /// after a save the "Saved:" line already carries the new timestamp, and
+    /// after a restore the windows have visibly moved. A status line repeating
+    /// what the menu already shows is noise that then sits there for hours.
+    @Published var notice: String?
     @Published var isWorking = false
 
     /// Created eagerly and never optional. An earlier version handed the model
@@ -96,29 +101,42 @@ final class AppModel: ObservableObject {
 
     func save() {
         isWorking = true
-        lastStatus = "Saving…"
+        notice = nil
         watcher.saveNow { [weak self] ok in
             guard let self else { return }
             self.isWorking = false
             self.refresh()
-            self.lastStatus = ok
-                ? "Saved \(self.savedAtLabel)"
-                : "Save failed — see the debug log"
+            // On success the refreshed "Saved:" timestamp is the confirmation.
+            self.notice = ok ? nil : "Save failed — see the debug log"
         }
     }
 
     func restore() {
         isWorking = true
-        lastStatus = "Restoring…"
+        notice = nil
         watcher.restoreNow { [weak self] report in
             guard let self else { return }
             self.isWorking = false
-            var parts = ["\(report.exact) restored"]
-            if report.constrained > 0 { parts.append("\(report.constrained) constrained") }
-            if report.failed > 0 { parts.append("\(report.failed) failed") }
-            if report.unmatchedSaved > 0 { parts.append("\(report.unmatchedSaved) not open") }
-            self.lastStatus = parts.joined(separator: ", ")
+            self.notice = AppModel.notice(for: report)
         }
+    }
+
+    /// nil when everything landed. Otherwise names only what went wrong, and
+    /// stays until the next action, because a window that did not come back is
+    /// worth noticing late.
+    static func notice(for report: RestoreReport) -> String? {
+        var problems: [String] = []
+        if report.unmatchedSaved > 0 {
+            problems.append("\(report.unmatchedSaved) not open")
+        }
+        if report.constrained > 0 {
+            problems.append("\(report.constrained) could not be resized")
+        }
+        if report.failed > 0 {
+            problems.append("\(report.failed) failed")
+        }
+        guard !problems.isEmpty else { return nil }
+        return "Last restore: \(report.exact) placed, " + problems.joined(separator: ", ")
     }
 
     func openAccessibilitySettings() {
